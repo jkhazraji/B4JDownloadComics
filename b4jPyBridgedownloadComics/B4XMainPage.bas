@@ -13,10 +13,7 @@ Version=9.85
 'Open global Python shell - make sure to set the path under Tools - Configure Paths. Do not update the internal package.
 'ide://run?File=%B4J_PYTHON%\..\WinPython+Command+Prompt.exe
 
-'Show and display comics from gocomics.com copyright JMKareem
-'See: https://pypi.org/project/gocomics.py/
-'and: https://www.gocomics.com/
-'also:https://gocomics.readthedocs.io/en/latest/
+'required libraries: requests , beautifulsoup4
 Sub Class_Globals
 	Private Root As B4XView
 	Private xui As XUI
@@ -49,15 +46,7 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	InitializeComicSelector
 	GetComicList
 	PrintPythonVersion
-''	Dim sum As PyWrapper = ExampleOfPythonMethod(10, 20)
-''	sum.Print
-''	'This also works, note that 'sum' is passed instead of a number.
-''	sum = ExampleOfPythonMethod(sum, 15)
-''	sum.Print2("The value of sum:", "", False)
-''	'And if we want to get the value:
-''	Wait For (sum.Fetch) Complete (sum As PyWrapper)
-''	Dim z As Int = sum.Value
-''	Log("This will be printed by B4J process: "  & z)
+
 End Sub
 
 Private Sub B4XPage_Background
@@ -91,8 +80,6 @@ Private Sub Button1_Click
 		Dim img As Image
 		Dim fName As String=File.GetName(filepath)
 		
-		Log(File.GetName(filepath))
-		'{'success': True, 'filepath': 'C:\\Users\\dell\\DOCUME~1\\b4j\\B4J_PY~2\\B4J\\Objects\\comics\\peanuts_2025-11-24.png', 'title': 'Peanuts by Charles Schulz for November 23, 2025 | GoComics', 'date': '2025/11/24', 'url': 'https://www.gocomics.com/peanuts/2025/11/24'}
 		Try
 			img.Initialize(File.DirApp & "\comics", fName)
 			ImageView1.SetImage(img)
@@ -104,6 +91,7 @@ Private Sub Button1_Click
 		xui.MsgboxAsync("Not found","Error")
 	End If	
 End Sub
+'formt date
 Sub GetFormattedDateFromPicker As String
 	Dim ticks As Long = DatePicker1.DateTicks
 	Dim year As Int = DateTime.GetYear(ticks)
@@ -112,7 +100,7 @@ Sub GetFormattedDateFromPicker As String
     
 	Return year & "/" & NumberFormat2(month, 1, 0, 0, False) & "/" & NumberFormat2(day, 1, 0, 0, False)
 End Sub
-
+'setup combobox
 Sub GetComicList As List
 	Dim comics As List
 	comics.Initialize
@@ -360,158 +348,8 @@ def download_comicfinal(comic_name, date=None):
 	Return pyResult.Value
 	
 End Sub
-''#if mainPy
-''#if __name__ == "__main__":
-''#     # Get command line arguments
-''#     comic_name = sys.argv[1] if len(sys.argv) > 1 else None
-''#     date = sys.argv[2] if len(sys.argv) > 2 else None
-''    
-''#     print(f"=== COMIC DOWNLOADER STARTED ===", file=sys.stderr)
-''#     print(f"Debug: Arguments received - comic: '{comic_name}', date: '{date}'", file=sys.stderr)
-''    
-''#     if not comic_name:
-''#         result = {"success": False, "error": "Comic name is required. Usage: python comic_downloader.py <comic_name> [date]"}
-''#         print(json.dumps(result))
-''#         sys.exit(1)
-''    
-''#     print(f"Debug: Starting download process...", file=sys.stderr)
-''#     result = download_comic(comic_name, date)
-''#     print(f"Debug: Process completed with success: {result['success']}", file=sys.stderr)
-''#     print(f"=== COMIC DOWNLOADER FINISHED ===", file=sys.stderr)
-''    
-''#     print(json.dumps(result))
-''
-''#End If
+
 Private Sub PrintPythonVersion
 	Dim version As PyWrapper = Py.ImportModuleFrom("sys", "version")
 	version.Print2("Python version:", "", False)
 End Sub
-
-'Tip: start typing Py and use the Py macros to create such methods:
-Private Sub ExampleOfPythonMethod (X As Object, Y As Object) As PyWrapper
-	Dim Code As String = $"
-def ExampleOfPythonMethod (X, Y):
-    #python code here
-	return X + Y
-"$
-	Return Py.RunCode("ExampleOfPythonMethod", Array(X, Y), Code)
-End Sub
-
-
-#if data
-gocomics.py is a Pythonic, fun, and easy-to-use library for fetching comics and metadata from GoComics.com. 
-Whether you want to build a comic reader, analyze trends, or just grab your favorite strip, this package is for you!
-
-Features
-Fetch any comic by identifier and date
-
-Get comic metadata (title, author, description, images, etc.)
-
-List all available comics and categories
-
-Find popular and political comics
-
-Fully documented and type-annotated
-
-MIT licensed and open source
-
-Why gocomics.py?
-Simple: One-liner to fetch a comic!
-
-Powerful: Access all the metadata you need
-
-Community-driven: Contributions welcome
-
-Inspired by comics: Because code should be fun!
-
-Background
-In 2024, GoComics.com changed its interface and added a paywall that blocks most comics from non-subscribers. 
-gocomics.py works by programmatically fetching comic data and images, allowing you to access comics and metadata 
-even if they are paywalled on the site.
-
-Requirements
-Python 3.8+
-beautifulsoup4
-requests
-
-Installation
-# Stable release
-python3 -m pip install "gocomics.py"  # Unix/macOS
-py -m pip install "gocomics.py"       # Windows
-# Development version
-git clone https://github.com/Ombucha/gocomics.py
-Comic API
-gocomics.Comic - Fetch and explore a comic
-.identifier (str): The comic’s identifier (e.g., “calvinandhobbes”)
-
-.date (datetime, optional): The date of the comic (default: latest)
-
-.title, .description, .image_url, .author, .followers_count, .about, .characters, etc.
-
-.download(filename=None, path=None): Download the comic image
-
-.show(filename=None, path=None): Open the comic image in your default viewer
-
-.refresh(): Refresh the comic’s data
-
-gocomics.search - List all comics (optionally filter by category or updated today)
-
-gocomics.search_political - List political comics (optionally filter by category or updated today)
-
-gocomics.get_popular_comics - Get trending/popular comics (optionally political)
-
-gocomics.stream_comics - Iterate comics for a strip between two dates
-
-Examples
-Basic usage:
-
-from gocomics import Comic
-comic = Comic("calvinandhobbes")
-print(comic.title)
-print(comic.image_url)
-Fetch a comic from a specific date:
-
-from datetime import datetime
-comic = Comic("garfield", datetime(2020, 1, 1))
-print(comic.title, comic.image_url)
-Download and show a comic:
-
-path = comic.download(filename="garfield2020.png")
-comic.show(filename="garfield2020.png")
-Refresh comic data:
-
-comic.refresh()
-List all available comic identifiers:
-
-from gocomics.utils import search
-all_comics = search()
-print(all_comics[:10])  # Show first 10
-List comics in a category:
-
-animal_comics = search(categories=["funny-animals"])
-print(animal_comics)
-List comics updated today:
-
-updated_today = search(last_updated_today=True)
-print(updated_today)
-List political comics:
-
-from gocomics.utils import search_political
-political = search_political()
-print(political)
-List popular comics:
-
-from gocomics.utils import get_popular_comics
-popular = get_popular_comics()
-print(popular)
-List popular political comics:
-
-popular_political = get_popular_comics(political=True)
-print(popular_political)
-Stream all comics for a strip between two dates:
-
-from gocomics.utils import stream_comics
-from datetime import datetime
-for comic in stream_comics("garfield", start_date=datetime(2020, 1, 1), end_date=datetime(2020, 1, 5)):
-    print(comic.date, comic.title)
-#End If
